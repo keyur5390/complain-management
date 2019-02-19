@@ -1,0 +1,10 @@
+RewriteEngine On
+DirectoryIndex index.php index.html
+RewriteBase /complain-manager/
+
+RewriteRule ^image-catalog/(.*)/(.*) image.php?image=$2&dir=$1 [L]
+
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /complain-manager/index.php [L]
