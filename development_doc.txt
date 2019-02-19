@@ -1,0 +1,186 @@
+How to Create multi language module
+==================================================
+
+Points for form and UI
+----------------------
+- In form put following hidden variable for current language
+	<input type="hidden" id="lang_id" name="lang_id" value="">
+
+- To display language options in form page create one div with id in add/edit form
+	<div id="langOptions">                         
+        </div>
+
+- Create javascript "pageData" object to store current data. Make sure object name should be "pageData"
+
+- Create "fillForm" javascript function to fill fomr data as below.
+
+	// fillup form if record is set
+        function fillForm()
+        {
+                if(pageData)
+                {
+                        languageOption("langOptions",pageData.lang_id);
+                        $("#lang_id").val(pageData.lang_id);
+                        $("#txtTitle").val(pageData.name);
+                        $("#txtSlug").val(pageData.slug);
+                        $("#txaDescription").val(pageData.description);
+                        $("#txtMetaTitle").val(pageData.meta_title);
+                        $("#txaMetaDescription").val(pageData.meta_description);
+                        $("#txaMetakeyword").val(pageData.meta_keyword);
+                }
+        }
+
+Note: In "fillForm" function do not forget to call "languageOption" function. It will display all available language option in language div created before. It takes two parameters. 1) Language option div Id, 2) Current Language Id
+
+
+
+
+Points for server script
+------------------------ 
+
+- Use "UTIL::getLanguageData" function to fetch current record from database. This function will detect current language and return data of that language.
+	e.g.
+	<?php
+	     if((int)$id != 0)
+        	return UTIL::getLanguageData("SELECT p.id,pc.name,p.slug,pc.description,pc.image_name,pc.meta_title,pc.meta_description,pc.meta_keyword,p.status,pc.lang_id FROM ".CFG::$tblPrefix."page as p,".CFG::$tblPrefix."page_content as pc where p.id=%d ",array("id" => $id));
+
+	?>
+
+Note: Do not forget to set "land_id" field in column list. Check above example
+
+- 
+
+
+
+
+How to combine CSS or JS file in one file Dynamically
+======================================================================
+
+- CFG::$mergeFiles - it is use to enable or disable merge file functionality. accept on "true" or "false" value
+- CFG::$mergeDir - It is use to specify merge file directory in template folder.
+
+
+
+1.) Select uniqe group name for all file you want to combine
+	e.g. commonCSS or commonJS
+
+2.) add file in group using "groupFiles" function
+	e.g.Layout::groupFiles("commonjs","c:/wamp/www/jss/template/front/js/jquery-1.10.2.min.js","js","footer");
+
+	- Group file function has four parameters. All parameters are required.
+	- First parameter is "Group Name" it should be unique. Do not use same group name.
+	- Second parameter is physical path of file
+	- Third parameter is type of file. There are only two type "js" and "css"
+	- Fourth parameter is position in which we have to inclue grouped files. Again there are only two values "header" and "footer"
+
+
+Add slug parts in URL
+================================
+
+- URI::getURL function has been modified to pass slug parts in URL.
+- "$slugPart" parameter has been added in function. its an optional parameter. It is array that with all slug parts after slug. Add id in slugpart if you want to include it.
+
+public static function getURL($moduleName,$actionName,$id="",$param="",$slugPart = array())
+
+
+
+Javascript function to create URL
+=============================================
+
+- Javascript function is created to create URL in client site. It supports both SEF and Non-SEF URLs.
+- It contians four parameters.
+	- curURL - action URL. It may be SEO or NON-SEF
+	- id - entity id that you want to pass in URL
+	- slugPart - same as PHP function you can pass slug part
+	- param - additional query string parameters.
+
+function getURL(curURL,id,slugPart,param)
+
+
+Set process loader in add/edit form
+=========================================================
+1.) Put below div above button and form content div as below. Make sure ID of loader must be "formLoad". Make it common practice. Also don't forget to add class "showFormLoad".
+
+<div class="showFormLoad" id="formLoad"></div>
+<div class="content" style="height:50px;" >  <!-- Contact Back, Save and Continue Edit and Save buttons -->     </div>
+<div class="content" >  <!-- Contains actual form -->     </div>
+
+2.) above code will display process image when form load. It will not hide automatically. We need to control it as per our need.
+
+3.) Use "toggleFormLoad("hide")" function to display or hide process div. It accepts only two value "show" and "hide".
+
+4.) Call "toggleFormLoad" at last in "fillForm()" function. It will hide process form in boath add/update event.
+
+
+
+Prevent multiple form submit in admin section
+============================================================
+- Use below function to prevent multiple form submit.
+- In function takes two parameters. First parameter is event object and second paramenter is button object.
+- It fill first disable button, then prevent default event and will load process image.
+- At last it will validate form and submit it if validations are correct.
+
+		// submit form
+		function submitForm(event,obj)
+		{
+                    obj.prop("disabled",true);
+                    event.preventDefault();                    
+                    if($('#frmPage').valid()){
+			    toggleFormLoad("show");
+                            $('#frmPage').submit();
+		    }
+		}
+
+
+Create image/file uploader with property dialog box
+=================================================
+
+1.) First we will create image uploader then we will implement property dialog box
+
+	- It is very simple to create image uploader
+	- Create following divs in HTML to create uploader structure
+
+		<div style="float: left; position: relative; overflow: hidden; direction: ltr;" class="qq-upload-button btn btn-success">
+                   Upload Image
+                   <input type="file" name="flImage" id="flImage" style="position: absolute; right: 0px; top: 0px; font-family: Arial; margin: 0px; padding: 0px; cursor: pointer; opacity: 0;"> 
+                 </div>
+
+                 <div id="files"></div>                    
+
+                 <div class="fileProgress"></div>
+
+	- In above code first div create uploader button. It also contains input type "file". Make sure name of input type file should be unique. To create multiple uploader just add 'multiple=""' property in file input field
+	- Second div will display uploaded image/file thumbnail. It will display multiple file if uploaded is use for multiple files. Again DIV ID must be unique
+	- Third div will display progress bar of uploading image/file. Again DIV class must be unique
+	- Our HTML structure is ready, Now we will call javascript function to create uploader.
+	- "createUploader" function is used to create image/file uploader. Same function will us to create uploader for different types of file.
+	- "createUploader" function contains following 11 parameters.
+
+			Param 1 - String uploaderId -> Id of file uploader. Same name will use to create hidden variable of uploaded file
+         		Param 2 - String progressBarClass -> class of progress div
+		        Param 3 - String fileGridId -> Id of grid which will display uploaded files
+         		Param 4 - String fileGridFunction -> call back function to display file grid
+         		Param 5 - String uploadURL -> Servar URL to save file
+         		Param 6 - Array fileTypes -> array of required file types
+         		Param 7 - String uploadDir -> file upload directory name
+         		Param 8 - String deleteURL -> File delete URL
+         		Param 9 - Object fileData -> existing file data
+         		Param 10 - Integer recordId -> Current record id
+         		Param 11 - Integer maxFiles -> maximum no of files allow to upload. Only for multiple
+
+	- e.g. createUploader("flImage","fileProgress","files",displayUploadResult,"<?php echo URI::getURL("mod_admin","upload_image")?>",["docx","jpg","gif","png","pdf","xlsx"],"<?php echo CFG::$pageDir;?>","<?php echo URI::getURL("mod_page","delete_file")?>",(pageData?[{"name": pageData.image_name,"title":pageData.image_title,"alt": pageData.image_alt}]:""),((pageData)?pageData.id:""));
+	- Make practive to call "createUploader" function in form fill function.
+
+2.) Now we will create image/file property dialog.
+
+	- Just add following HTML code in file to create proprty dialog. Add it at last of file. Make sure it is common to all uploader in page.
+
+		<div class="imgPrt modal fade" role="dialog"></div>
+
+	- Do not change class or any other property of above code
+	
+	
+
+
+
+

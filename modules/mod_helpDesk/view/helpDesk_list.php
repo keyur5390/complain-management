@@ -1,0 +1,154 @@
+<?php
+//restrict direct access to the testimonial
+defined('DMCCMS') or die('Unauthorized access');
+?>
+<script>
+    function parentFilter(parent) {
+        //console.log(parent.value);
+        $(parent).attr("data-source", "1");
+
+    }
+</script>
+<?php
+
+?>
+<section>
+    <div class="midTop">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="fullColumn">
+                    <div class="topLeft">
+                        <div class="pageTitle blc-<?php echo APP::$moduleRecord['icon_class']; ?>"><span>Help Desk List</span></div>
+                        <?php
+//                              pre($_SESSION);
+//                              echo $_SESSION['user_login']['roll_name'];
+                            if
+                            (
+                                    ($_SESSION['user_login']['roll_name']=="Help Desk Manager" || $_SESSION['user_login']['id']=="1" ) && 
+                                    (Core::hasAccess(APP::$moduleName, "helpDesk_edit"))
+                            )
+                            {
+                                ?>
+                                    <a href="<?php echo URI::getURL(APP::$moduleName,"helpDesk_edit");?>" class="trans addNew" title="New Help Desk">New Help Desk</a>
+                                <?php
+                            }
+                        ?>
+                        
+                    </div>
+                    <div class="topRight">
+                        <?php if (Core::hasAccess(APP::$moduleName, "delete_helpDesk")) { ?>
+                                <div class="dropbox bulkDrop">
+                                    <select title="Please select actions">
+                                        <option value="">Actions</option>
+                                        <option value="" onclick="changeStatus('index.php?m=mod_helpDesk&a=change_status', '', '1')">Active</option>
+                                        <option value="" onclick="changeStatus('index.php?m=mod_helpDesk&a=change_status', '', '0')">Inactive</option>
+                                        <option value="" class="hideDeleteOption" onclick="deleteRecord('index.php?m=mod_helpDesk&a=delete_helpDesk', '')">Delete</option>
+                                    </select>                        	
+                                </div>
+                                <?php } ?>
+                        <form id="searchForm">
+                            <div class="cust_searchBox searchBox">
+                                
+<!--                                <div class="customeSearch" style="margin-left: 15px;width: 220px">
+                                    <select name="searchForm[parent_region]" id="parent_region" title="Parent Region" onchange='parentFilter(this);' data-source="0">
+                                        <option value="">Filter by Parent Region</option>
+                                        <?php
+//                                        foreach ($data as $parent) {
+//                                            ?><option value="<?php // echo $parent['id']; ?>"><?php // echo $parent['name']; ?></option><?php
+//                                        }
+                                        ?>
+                                    </select>                                            	
+                                </div>-->
+                                <div class="customeSearch" style="margin-left: 15px;width: 220px">
+                                    <input type="text" id="name" name="searchForm[name]" class="txt" title="Search help desk name" placeholder="Search help desk name" />
+                                    <!--<button data-title="Search form" type="submit" title="Search" class="searchBtn">Search</button>-->
+                                    <!--<button class="trans searchIcon" type="submit" ></button>-->
+                                    <!--<a href="javascript:;" title="Search" class="searchBtn">Search</a>-->
+                                </div>
+<!--                                <button data-title="Search form" type="submit" title="Search" class="searchBtn">Search</button>
+                                <a href="javascript:;" title="Search" class="searchBtn">Search</a>-->
+<button data-title="Search form" type="submit" title="Search" class="btn searchIcon1">Search</button>
+                                
+                            </div>
+                            <a href="javascript:;" title="Search" class="searchBtn">Search</a>
+                            <input type="reset" value="Reset" title="Reset" class="trans resetBtn" onclick="resetForm()">
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tableBox" id="gridBlock">
+        <div class="container-fluid">
+            <!-- loader -->
+            <div class="qLoverlay-new"></div>
+            <div class="qLbar-new"></div>
+            <!-- loader -->
+            <div class="row">
+                <div class="fullColumn">
+                    <form id="frmGrid">
+                        <ul class="table">
+                            <li class="topLi">
+                                 <?php 
+                            if(isset($_SESSION['user_login']) && $_SESSION['user_login']['roll_id']=='1'){?>
+                                <div class="chekMain">
+                                    <div class="chkInn">
+                                        <label>
+                                            <input type="checkbox" id="masterCh" name="status" value="all" class="checkbox" />
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            <?php }?>
+                                <div class="hashBox">Sr #</div>
+                                <!--<div id="id" class="sorting sort">Id</div>-->
+                                <div id="name" class="sorting sort"><span>Help Desk Name</span></div>
+                                <!--<div id="sort_order" class="sortOrder sorting sort"><span>Sort Order</span></div>-->
+                                <div id="status" class="statusBox sorting sort"><span>Status</span></div>
+                            </li>
+                        </ul>
+                    </form>                                
+                    <div class="tableBtm">
+                        <div class="leftSelect">
+                            <?php if (Core::hasAccess(APP::$moduleName, "delete_helpDesk")) { ?>
+                            <div class="dropbox bulkDrop">
+                                <select title="Please select actions">
+                                    <option value="">Actions</option>
+                                    <option value="" onclick="changeStatus('index.php?m=mod_helpDesk&a=change_status', '', '1')">Active</option>
+                                        <option value="" onclick="changeStatus('index.php?m=mod_helpDesk&a=change_status', '', '0')">Inactive</option>
+                                        <option value="" class="hideDeleteOption" onclick="deleteRecord('index.php?m=mod_helpDesk&a=delete_helpDesk', '')">Delete</option>
+                                </select>                         	
+                            </div>
+                            <?php } ?>
+                            
+                            <div class="dropbox numDrop ">
+                                <form id="numOfRecordForm" >
+                                    <select class="numOfRecord" name="searchForm[numOfRecord]" title="Please select no. pages">
+                                        <option value="10" selected='selected'>10 per page</option>
+                                        <option value="20">20 per page</option>
+                                        <option value="30">30 per page</option>
+                                    </select>                        	
+                                </form>
+                            </div>
+
+                        </div>
+                        <div class="content pagination">
+                            <div id="pagingNo" class="recordCount"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="noGrid" class="content noRecord hideBlock"> Help Desk records not found </div>
+    <div class="mobiAction" style="display:none;">
+        <div class="counterDiv">0</div>
+        <?php if (Core::hasAccess(APP::$moduleName, "delete_helpDesk")) { ?>
+        <a href="#" onclick="changeStatus('index.php?m=mod_helpDesk&a=change_status', '', '1')" title="Active" class="activeStatus"></a>
+        <a href="#" onclick="changeStatus('index.php?m=mod_helpDesk&a=change_status', '', '0')" title="Inactive" class="inactiveStatus"></a>
+        <a href="#" onclick="deleteRecord('index.php?m=mod_helpDesk&a=delete_helpDesk', '')" title="Delete" class="delIcon hideDeleteOption">Delete</a>
+        <?php } ?>
+        <button class="closeAction" title="Close"></button>
+    </div>
+</section>

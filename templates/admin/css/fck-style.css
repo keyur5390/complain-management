@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,600,400italic,700italic');
+body{font:14px/18px "Open Sans",sans-serif;}
+strong{font-weight: 700;}
+h3, h2{font-size: 20px;line-height: 22px;font-weight: 700;color: #000;margin-bottom: 16px;}
+h4{font-size: 18px;font-weight: 700;color: #000;margin-bottom: 16px;}
+h5{font-size: 16px;font-weight: 700;color: #000;margin-bottom: 16px;line-height:25px;}
+h6{font-size: 14px;font-weight: 700;color: #000;margin-bottom: 16px;}
+p{font-size: 14px;line-height: 24px;font-weight: 400;color: #000;margin-bottom: 14px;text-align: justify;}
+p a{font-weight: 600;color: #000;color:#000;}
+ul{list-style-type:none;}
+ul{float: left;width: 100%;margin:-3px 0 11px;padding:0 0 0 15px;}
+.threeUl li {float: left;width: 33.33%;}
+li{font-size: 14px;line-height: 20px;font-weight: 600;color: #0063a6;position: relative;padding-left: 15px;margin-bottom: 8px;float: left;width: 100%;}
+ul li:before{position: absolute;content: '';border-right: 1px solid #0063a6;border-bottom: 1px solid #0063a6;height: 6px;width: 6px;transform: rotate(-45deg);top: 9px;left: 0;}
+ol{margin:-3px 0 11px;padding:0 0 0 15px;}
+ol li{padding-left:0;}
+/*ol li{counter-increment:carousel-cell;padding-left:0;}
+ol li:before{content:counter(carousel-cell)'.';margin-right:5px;}*/
+.comTitle{display:inline-block;vertical-align:top;}
+.comTitle span{display:inline-block;vertical-align:middle;position:relative;}
+.titleTxt{text-transform:uppercase;font:800 30px/36px 'Open Sans', sans-serif;color:#000000;}
+.leftLine, .rightLine{width:110px;height:2px;background-color:#034ea2;margin-top:3px;}
+.leftLine{margin-right:26px;}
+.leftLine:after{position:absolute;right:-25px;top:50%;content:'';width:22px;height:22px;border-right:2px solid #034ea2;border-bottom:2px solid #034ea2;transform:rotate(135deg);-webkit-transform:rotate(135deg);margin-top:-11px;}
+
+.rightLine{margin-left:26px;}
+.rightLine:before{position:absolute;left:-25px;top:50%;content:'';width:22px;height:22px;border-right:2px solid #034ea2;border-bottom:2px solid #034ea2;transform:rotate(-45deg);-webkit-transform:rotate(-45deg);margin-top:-11px;}
+
+
+em{font-style:normal;}
+p:last-child{margin-bottom: 0;}
+ul li:last-child {margin-bottom: 0;}
+ul li ul{margin-top: 5px;margin-bottom: 0;}
+a{text-decoration: underline;font-weight: 600;}
+
+.promisUl{display:inline-block;vertical-align:top;width:100%;margin:14px 0 0;}
+.promisUl li{padding:0;margin-bottom:20px;}
+.promisUl li:before{display:none;}
+.proSpec{color:#222222;font-size:18px;line-height:26px;}
+

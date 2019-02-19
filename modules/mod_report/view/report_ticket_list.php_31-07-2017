@@ -1,0 +1,293 @@
+<?php
+//restrict direct access to the testimonial
+defined('DMCCMS') or die('Unauthorized access');
+//print_r($data);
+?>
+<style>
+    .progControlSelect2 {
+        width: 350px;
+    }
+    .progControlSelect2_1 {
+        width: 350px;
+    }
+    .progControlSelect2_2 {
+        width: 350px;
+    }
+    form {
+        margin-top: 2px;
+    }
+    .select2-results__option[aria-selected=true] {
+        display: none;
+    }
+</style>
+<section>
+    <div class="midTop">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="fullColumn repMain">
+                    <div class="topLeft bottomSpace">
+                        <div class="pageTitle blc-<?php echo APP::$moduleRecord['icon_class']; ?>"><span>Ticket Report List</span></div>
+                        <!-- <button type="button" class="trans emailNew" onclick="send_mail('all');" title="Send Stock Report">Send Ticket Report</button>-->
+                        <a href="#" title="Send Ticket Report" onclick="send_mail('all');" class="trans addNew export_file" target="_blank">Send Ticket Report</a>
+                        <a href="#" onclick="export_data();" title="Export To CSV" class="trans addNew export_file" >Export To CSV</a>
+                    </div> 
+                    <!-- rightSide div -->
+                    <div class="topRight ticSearchBar">
+                        <form id="searchForm" class="ticketForm reportForm">
+                            <div class="cust_searchBox searchBox ipadFull">
+                                <div class="customeSearch">
+                                    <div class="dropbox">
+                                        <?php /*
+                                         * Ratan M Desai
+                                         * 17/05/17
+                                         * Implemented select to auto suggest so comment difault dropdown
+
+                                          <select name="searchForm[customer]" id="customer" title="Select Customer" class="progControlSelect2 "  >
+                                          <option value="">Please Select Customer</option>
+                                          <?php
+                                          foreach ($data['customer'] as $key => $value) {
+                                          ?>
+                                          <option value="<?php echo $value['id']; ?>"><?php echo $value['name']; ?></option>
+                                          <?php }
+                                          ?>
+                                          </select>
+                                         */ ?>
+                                        <select name="searchForm[customer]" id="customer" title="Please Select Customer" class="progControlSelect2">
+                                            <option value="">Please Select Customer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- change postion -->
+
+                                <?php if (isset($_SESSION['user_login']) && $_SESSION['user_login']['roll_id'] == '1') { ?>
+
+                                    <div class="customeSearch">
+                                        <div class="dropbox">
+                                            <?php /*
+                                             * Ratan M Desai
+                                             * 17/05/17
+                                             * Implemented select to auto suggest so comment difault dropdown
+                                              <select title="Please select engineer" id="searchByEngineer" name="engineer"  >
+                                              <option value="">Select Engineer</option>
+                                              <?php
+                                              foreach ($data['engineer'] as $key => $value) {
+                                              ?>
+                                              <option value="<?php echo $value['id']; ?>"><?php echo $value['name']; ?></option>
+                                              <?php }
+                                              ?>
+                                              </select>
+                                             */ ?>      
+                                            <select name="engineer" id="searchByEngineer" title="Please select engineer">
+                                                <option value="">Select Engineer</option>
+                                            </select>                                            
+                                        </div>
+                                    </div>
+                                    <div class="customeSearch">
+                                        <div class="dropbox" style="width:100%">
+                                            <?php /*
+                                             * Ratan M Desai
+                                             * 17/05/17
+                                             * Implemented select to auto suggest so comment difault dropdown
+                                              <select title="Please select helpdesk" id="searchByHelpDesk" name="helpdesk"  >
+                                              <option value="">Select Help Desk</option>
+                                              <?php
+                                              foreach ($data['helpdesk'] as $key => $value) {
+                                              ?>
+                                              <option value="<?php echo $value['id']; ?>"><?php echo $value['name']; ?></option>
+                                              <?php }
+                                              ?>
+                                              </select>
+                                             */ ?>       
+                                            <select name="helpdesk" id="searchByHelpDesk" title="Please select help desk">
+                                                <option value="">Select Help Desk</option>
+                                            </select>       
+                                        </div>
+                                    </div>
+                                    <div class="customeSearch">
+                                        <div class="dropbox " style="width:100%">
+                                            <?php /*
+                                             * Ratan M Desai
+                                             * 17/05/17
+                                             * Implemented select to auto suggest so comment difault dropdown
+                                              <select title="Please select region" id="searchByRegion" name="region"  >
+                                              <option value="">Select Region</option>
+                                              <?php
+                                              foreach ($data['region'] as $key => $value) {
+                                              ?>
+                                              <option value="<?php echo $value['id']; ?>" <?php if ($value['parent_region'] == '0') { ?>disabled="true"<? } ?>><?php echo ($value['parent_region'] != '0') ? "&nbsp;&nbsp;" . $value['name'] : $value['name']; ?></option>
+                                              <?php }
+                                              ?>
+                                              </select>
+                                             */ ?>
+                                            <select name="region" id="searchByRegion" title="Select region">
+                                                <option value="">Select Region</option>
+                                            </select>     
+                                        </div>
+                                    </div>                                   
+                                <?php } ?>
+                                <div class="customeSearch">
+                                    <div class="dropbox " style="width:100%">
+                                        <select title="Please select status" id="searchByStatusReport" name="ticket_status"  >
+                                            <option value="">Select Ticket Status</option>
+                                            <?php
+                                            foreach (CFG::$ticketStatusArray as $key => $value) {
+                                                ?>
+                                                <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                            <? }
+                                            ?>
+                                        </select>                        	
+                                    </div>
+                                </div>
+
+                                <!-- change postion -->
+
+                                <div class="customeSearch">
+                                    <input type="text" id="ticket_subject" name="searchForm[ticket_subject]" class="txt" title="Search Ticket Subject" placeholder="Search Ticket Subject" />
+                                </div>
+
+                                <!-- date part -->
+
+                                <div class="customeDate">
+                                    <input  type="text" name="searchForm[dateFrom]" id="txtDFrom" class="txt " maxlength="85" data-content="Select from date" data-placement="top" rel="popover" data-title="From date" data-trigger="focus" readonly title="From date" placeholder="From date">
+                                </div>                                
+                                <div class="customeDate">
+                                    <input  type="text" name="searchForm[dateTo]" id="txtDTo" class="txt " maxlength="85" data-content="Select to date" data-placement="top" rel="popover" data-title="To date" data-trigger="focus" readonly title="To date" placeholder="To date" >
+                                </div>
+
+                                <!-- button part -->   
+                                <button class="btn" type="submit" title="Search" data-title="Search form">Search</button>
+                                <!--<button class="trans searchIcon" type="submit" ></button>--> </div> 
+                            <a href="javascript:;" title="Search" class="searchBtn">Search</a>
+                            <input type="reset" value="Reset" title="Reset" class="trans resetBtn" onclick="resetForm()">                               
+                        </form>                           
+                    </div>       
+                    <!-- rightSide div end -->                                      
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    if (isset($_SESSION['message'])) {
+        echo $_SESSION['message'];
+        unset($_SESSION['message']);
+    }
+    ?>
+    <div class="tableBox" id="gridBlock">
+        <div class="container-fluid">
+            <!-- loader -->
+            <div class="qLoverlay-new"></div>
+            <div class="qLbar-new"></div>
+            <!-- loader -->
+            <div class="row">
+                <div class="fullColumn">
+                    <form id="frmGrid">
+                        <ul class="table">
+                            <li class="topLi">
+
+                                <div class="hashBox">Ticket No</div>
+                                <div id="subject" class="sorting sort"><span>Ticket Subject</span></div>
+                                <div id="u.id" class="sorting sort"><span>Customer</span></div>
+                                <div id="u.id" class="sorting sort"><span>Engineer</span></div>
+                                <div id="ticket_status" class="sorting sort"><span>Ticket Status</span></div>
+                                <div id="region_id" class="sorting sort"><span>Region</span></div>
+                                <div id="u.helpdesk_id" class="sorting sort"><span>Help Desk</span></div>
+                            </li>
+                        </ul>
+                    </form>                                
+                    <div class="tableBtm">
+                        <div class="leftSelect">
+
+                            <div class="dropbox numDrop">
+                                <form id="numOfRecordForm" >
+                                    <select class="numOfRecord" name="searchForm[numOfRecord]" title="Please select no. pages">
+                                        <option value="10" selected='selected'>10 per page</option>
+                                        <option value="20">20 per page</option>
+                                        <option value="30">30 per page</option>
+                                    </select>                        	
+                                </form>
+                            </div>
+
+                        </div>
+                        <div class="content pagination">
+                            <div id="pagingNo" class="recordCount"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="noGrid" class="content noRecord hideBlock"> Ticket report records not found </div>
+    <div class="mobiAction" style="display:none;">
+        <div class="counterDiv">0</div>
+
+        <?php if (Core::hasAccess(APP::$moduleName, "delete_ticket")) { ?>
+            <option value="" onclick="deleteRecord('index.php?m=mod_ticket&a=delete_ticket', '')">Delete</option>
+        <?php } ?>
+        <button class="closeAction" title="Close"></button>
+    </div>
+</section>
+<div class="mail_dialog" style="display: none;">
+    <div class="tabBox">
+        <ul class="tabUl">
+            <li data-tab="emailmail" class="trans current" title="Mail">Mail</li>
+<!--            <li data-tab="emailattachment" class="trans" title="Attachment(s)">Attachment(s)</li>-->
+        </ul>
+        <form class="form-horizontal" id="frmMail" name="frmMail" method="post" style="width: 100%">
+            <div id="mailTabs" class="tabMain">
+                <ul>
+                    <!--  <li class="active"><a style="background: #00ABA9" href="#mail" data-toggle="tab">Mail</a></li>
+                    <li class=""><a style="background: #00ABA9" href="#attachment" data-toggle="tab">Attachment</a></li> -->
+                </ul>
+
+
+
+                <div class="accDiv tabDiv current" id="emailmail">
+                    <div class="tab-pane active" id="mail">
+                        <?php require CFG::$absPath . '/helper/templates/tpl_product_mail.php'; ?>
+
+                        <div class="newInputMain" >
+
+                            <label for="txtLabel" class="form-label span2" ></label>
+                            <input type="text" name="subject" id="mail_subject" class="txt" value="Subject" style="" data-title="Quantity"  data-trigger="focus" rel="popover" data-placement="right" title="Subject" placeholder="Subject" />
+
+                        </div>
+
+                        <div class="newInputMain">
+
+                            <textarea name="comment" id="txtAdjustComment" rows="10" class="span12 text" value="" data-title="Message" data-content="Please enter message" data-trigger="focus" rel="popover" data-placement="right" title="Please enter message" style=""></textarea>
+
+                        </div>
+
+                    </div>
+                    <lable class="Attach labelSpan" >Attachment</lable>
+                    <div class="img_upMain repPopImg">
+                        <input type="hidden" id="attachementD" name="attachementD" value="" />
+                        <table class="admnli_img_tbl">
+                            <tbody>
+                                <tr>
+                                    <td height="80" align="center" class="botmboder">
+                                        <a href="" id="exportDs" onclick="" class="blue po_pdf" >
+                                            <img src="<?php echo URI::getLiveTemplatePath() . '/images/csv_icon.jpg'; ?>">
+                                        </a>                            </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+
+                <div class="accDiv tabDiv" id="emailattachment">
+
+                    <div class="tab-pane" id="attachment">
+
+
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

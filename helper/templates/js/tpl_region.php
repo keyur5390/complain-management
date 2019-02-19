@@ -1,0 +1,143 @@
+<link rel="stylesheet" href="<?php echo URI::getLiveTemplatePath(); ?>/plugins/multiselect/jquery.multiselect.css" />    
+<script src = "<?php echo URI::getLiveTemplatePath(); ?>/plugins/multiselect/jquery.multiselect.js"></script>
+
+
+<script type="text/javascript">
+ //function to open a dialog with set value added by sagar jogi dt 01/06/2017 start 
+    function open_dialog(mainid,rid,rname,cperson,phone,adrs,ttl) {
+        div = $(".mail_dialog");
+      
+
+        div.html();
+        div.dialog({
+            autoOpen: true,
+            modal: true,
+            title: "Region Edit",
+            draggable: true,
+            resizable: false,
+            width: "500",
+            height: "450",
+            dialogClass: 'dialog',
+            closeOnEscape: false,
+            position: ['center', 10],
+            open: function() {
+                $("#txtOtherCC, #selSendCC").val("");
+                
+                var temp='<option value="'+rid+'" selected="selected">'+rname+'</option>'
+                $('#regEdit').html(temp);
+                $('#txtperson').val(cperson);
+                $('#txtrphone').val(phone);
+                $('#txtraddress').val(adrs);
+                $('#eid').val(mainid);
+                $('#total').val(ttl);
+               
+
+                var rules = {
+                    
+                    regEdit: {required:true},
+                  
+                   
+                };
+                var messages = {
+                  
+                    regEdit: {required:"Please enter region"},
+                   
+                };
+
+                // initialize form validator
+                validaeForm("frmMail", rules, messages);
+                validaeForm("frmMail");
+
+                
+
+                $("#cancel").off("click");
+                $("#cancel").on("click", function() {
+                    div.find("input").val("");
+                    div.dialog("close");
+                });
+                $(".ui-dialog-buttonset").find("button:first").html("Submit").addClass("applyTooptip").attr("data-title", "Submit");
+                $(".ui-dialog-buttonset").find("button:last").html("Cancel").addClass("applyTooptip").attr("data-title", "cancel");
+                $(".ui-dialog-buttonset").find("button").addClass("btn btn-primary");
+                applyTooltip();
+               
+                div.find("label.text-error").remove();
+        
+          
+                var livePath = '<?php echo CFG::$livePath; ?>';
+              
+                
+               
+            },
+            buttons: {
+                "send_email": function(e) {
+                        if($('#frmMail').valid())
+                        {
+                            send_email();
+                        }
+                      
+                      
+                },
+                   "close": function() {
+                    dropDownCloseAction();
+                    $(".tooltip").remove();
+                    
+                  
+                }
+            },
+            close: function() {
+                dropDownCloseAction();
+                $(".tooltip").remove();
+                
+                
+                div.dialog("destroy");
+            },
+        })
+    }
+    //function to open a dialog with set value added by sagar jogi dt 01/06/2017 end 
+//function to update region added by sagar jogi dt 01/06/2017 start
+    function send_email() {
+        $(".ui-dialog-buttonset").find(":button:last").remove();
+        $(".tooltip").remove();
+        $(".ui-dialog-buttonset").find(":button:first").prop("disabled", "disabled").html("Updating...");
+//        var mail_url = mailUrl;
+        $.ajax({
+            url: '<?php echo URI::getURL("mod_user", "region_edit"); ?>',
+            data: $("#frmMail").serialize(),
+            type: "post",
+           success: function(data) {
+                    var total=$('#total').val();
+                    var region_id=$('#regEdit').val();
+                    var region_name=$("#regEdit option:selected").text();
+                    var person=$('#txtperson').val();
+                    var phone=$('#txtrphone').val();
+                    var address=$('#txtraddress').val();
+                    var mainid=$('#eid').val();
+                    var lidiv='#li'+total;
+                   $(lidiv).empty();
+                var markup='<div class="modelDiv count"></div>';
+                            markup+='<div class="modelDiv" style="text-align: left;"><select style="display:none;" name=\"region[]\" id="region'+total+'" class="txt required regionClass" title="Region"><option value="'+region_id+'" selected>'+region_name+'</option>';
+
+                            markup+='</select>'+region_name+'</div>';
+                          markup+='<div class="modelDiv" style="text-align: left;"><input type="hidden" name="parsonName[]" id="txtPersonName'+total+'" class="txt" maxlength="100" title="Full Name" value="'+person+'" >'+person+'</div>';
+                            markup+='<div class="modelDiv" style="text-align: left;"><input type="hidden" name="regionPhone[]" onkeypress="return isNumberic(event);" maxlength="10" id="txtRegionPhone'+total+'" class="txt " title="Phone" value="'+phone+'" >'+phone+'</div>';
+                            markup+='<div class="modelDiv" style="text-align: left;"><input type="hidden" name="regionAddress[]" id="txtRegionAddress'+total+'" class="txt"  maxlength="160" title="Address" value="'+address+'" >'+address+'</div>';
+                              markup+='<div class="delDiv"><a href="javascript:;" title="Region Update" onclick="region_edit(this);" class="trans export_file" data-mainid="' + mainid + '"  data-rname="' + region_name + '" data-rid="' + region_id + '" data-person="' + person + '"  data-phone="' + phone + '" data-adrs="' + address + '" id="eid'+mainid+'" data-total="' + total + '">Edit</a></div>';
+                             markup+='<div class="delDiv"><input type="hidden" id="id[]" name="id[]" value="'+ mainid+'"><a href="javascript:void(0);" class="remRG delete deleteLink" title="Delete"></a></div>';
+                $(lidiv).append(markup);
+                
+                displayMessage("success", "Region Edit", "Region updated successfully");
+                div.dialog("close");
+            }
+        })
+    }
+    //function to update region added by sagar jogi dt 01/06/2017 end
+//function to close dialog added by sagar jogi dt 01/06/2017 start
+    function dropDownCloseAction() {
+
+    div.dialog("close");
+    }
+//function to close dialog added by sagar jogi dt 01/06/2017 end
+
+</script>
+
+
