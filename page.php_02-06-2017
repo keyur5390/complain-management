@@ -1,0 +1,54 @@
+<?php
+
+define('DMCCMS', 1);
+
+require_once('load.php');
+Load::loadApplication();
+error_reporting(0);
+
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'all_customer_email' && $_REQUEST['code'] != '') {
+
+
+    $code = strtolower($_REQUEST['code']);
+
+    $where = "";
+    if (isset($_REQUEST["notid"]) && !empty($_REQUEST['notid'])) {
+
+        $arr = array_filter($_REQUEST['notid']);
+        if (count($arr) > 0) {
+            $where .= " id not in (" . implode(",", $arr) . ") AND ";
+        }
+    }
+
+    $resultArray['items'] = DB::query("SELECT email as id,CONCAT(email ,'  <',name , '>') as text FROM " . CFG::$tblPrefix . "user WHERE " . $where . " ( LOWER(name) LIKE %ss_cuname OR LOWER(email) LIKE %ss_cuname) AND email != '' AND is_deleted != '1'", array('cuname' => $code));
+    // $resultArray['items'] = array("id"=>'other',"text"=>"Other");
+    array_push($resultArray['items'], array("id" => 'other', "text" => "Other"));
+    echo json_encode($resultArray);
+    exit;
+}
+
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'all_customer_name' && $_REQUEST['code'] != '') {
+    $code = strtolower($_REQUEST['code']);
+    $resultArray['items'] = DB::query("SELECT u.id as id,u.name as text FROM " . CFG::$tblPrefix . "user as u LEFT JOIN " . CFG::$tblPrefix . "rolls as r  ON  u.roll_id=r.id where r.name='Customer' and u.active='1' and u.name LIKE '%".$code."%'");
+    echo json_encode($resultArray);
+    exit;
+}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'all_engineer_name' && $_REQUEST['code'] != '') {
+    $code = strtolower($_REQUEST['code']);
+    $resultArray['items'] = DB::query("SELECT u.id as id,u.name as text FROM ".CFG::$tblPrefix."user as u LEFT JOIN ".CFG::$tblPrefix."rolls as r  ON  u.roll_id=r.id where r.name='Engineer' and u.active='1' and u.name LIKE '%".$code."%'");
+    echo json_encode($resultArray);
+    exit;
+}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'all_help_desk' && $_REQUEST['code'] != '') {
+    $code = strtolower($_REQUEST['code']);
+    $resultArray['items'] = DB::query("SELECT hd.id as id,hd.name as text FROM ".CFG::$tblPrefix."helpdesk as hd where hd.status='1' and hd.name LIKE '%".$code."%'");
+    echo json_encode($resultArray);
+    exit;
+}
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'all_region' && $_REQUEST['code'] != '') {
+    $code = strtolower($_REQUEST['code']);
+    $resultArray['items'] = DB::query("SELECT hd.id as id,hd.name as text FROM ".CFG::$tblPrefix."helpdesk as hd where hd.status='1' and hd.name LIKE '%".$code."%'");
+    $resultArray['items'] = DB::query("SELECT r.id as id,r.name as text FROM ".CFG::$tblPrefix."region as r where r.status='1' and r.name LIKE '%".$code."%'");
+    echo json_encode($resultArray);
+    exit;
+}

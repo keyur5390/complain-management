@@ -1,0 +1,347 @@
+<?php 
+	//restrict direct access to the category
+	defined( 'DMCCMS' ) or die( 'Unauthorized access' );
+
+        Class Ticket
+        {
+            /**
+            * constructor of class category. do initialization
+            *
+            * @author Bhavin Lunagariya <bhavin.datatech@gmail.com>
+            */
+
+            function __construct()
+            {
+                // load model
+                Load::loadModel("ticket");
+                
+            }
+
+            /**
+            * List of all the ticket
+            *
+            * @author Bhavin Lunagariya <bhavin.datatech@gmail.com>
+            */
+            function ticket_list()
+            {
+                //Create model object
+                $ticketObj=new TicketModel();
+                //get category listing
+                $ticketObj->getTicketList();
+                
+                //load region model
+                Load::loadModel("region","mod_region");
+        
+                
+                //create region object
+                $regionObj=new RegionModel();
+                //get all region
+                //$data['region']=$regionObj->getAllRegion();
+                $data['region']=$regionObj->getAllTicketRegionStatus();
+               
+                //load helpdesk model
+                Load::loadModel("helpDesk","mod_helpDesk");
+        
+                
+                //create helpdesk object
+                $helpdeskObj=new HelpDeskModel();
+                //get all helpdesk
+                $data['helpdesk']=$helpdeskObj->getAllHelpDeskData();
+               
+                $jsData = Layout::bufferContent(URI::getAbsModulePath()."/js/ticket.php");
+                
+                //create javascript variable for ajax url
+                Layout::addFooter($jsData);
+
+                //render layout
+                Layout::renderLayout($data);
+                
+            }
+            function completed_ticket_list()
+            {
+                //Create model object
+                $ticketObj=new TicketModel();
+                //get category listing
+                $ticketObj->getTicketList();
+                
+                //load region model
+                Load::loadModel("region","mod_region");
+        
+                
+                //create region object
+                $regionObj=new RegionModel();
+                //get all region
+                $data['region']=$regionObj->getAllRegion();
+                
+                //load helpdesk model
+                Load::loadModel("helpDesk","mod_helpDesk");
+        
+                
+                //create helpdesk object
+                $helpdeskObj=new HelpDeskModel();
+                //get all helpdesk
+                $data['helpdesk']=$helpdeskObj->getAllHelpDeskData();
+               
+                $jsData = Layout::bufferContent(URI::getAbsModulePath()."/js/ticket.php");
+                
+                //create javascript variable for ajax url
+                Layout::addFooter($jsData);
+
+                //render layout
+                Layout::renderLayout($data);
+                
+            }
+            /**
+            * edit the ticket
+            *
+            * @author Bhavin Lunagariya <bhavin.datatech@gmail.com>
+            */
+            function ticket_edit()
+            {
+                //Create model object
+                $ticketObj=new TicketModel();
+               if(isset($_POST['customer_id']) && !empty($_POST['customer_id'])) { 
+                   $ticketObj->getServices($_POST['customer_id']);
+               }
+                //Save ticket record
+                $ticketObj->saveTicket();
+                $data['customerData']=$ticketObj->getCustomerData();
+                //get catrgory record for update
+                $data["ticketData"]=$ticketObj->getTicketData(APP::$curId);
+                $vdata['ticketData']=$ticketObj->getTicketData(APP::$curId);
+                
+                //get record for update
+                $data['customerData']=$ticketObj->getCustomerData();
+                $vdata['problemData']=$ticketObj->getProblemData();
+               
+               
+                if(APP::$curId!='')
+                {
+                   
+                    $region=$ticketObj->getData("ticket","region_id","id",APP::$curId);
+                    $region_id=$region[0]['region_id'];
+                    
+                    //get customer region
+                    $data['ticketEngineerData']=$ticketObj->getRegionEngineer($region_id);
+                    $data['parentRegionData']=$ticketObj->getTicketRegion(APP::$curId);
+                }
+                
+                
+                
+                if($_SESSION['user_login']['roll_id']==7)
+                {
+                    
+                    $data['customerRegion']=$ticketObj->getCustomerRegion($_SESSION['user_login']['id']);
+                }
+                //include js in footer
+                
+                $jsData=Layout::bufferContent(URI::getAbsModulePath()."/js/ticket_edit.php",$data);
+
+                // create javascrpt variable for ajax url
+                Layout::addFooter($jsData);
+                
+                //render layout
+                Layout::renderLayout($vdata);
+                
+            }
+            
+            /**
+            * Delete ticket image and also update database
+            * 
+            * @author Bhavin Lunagariya<bhavin.datatech@gmail.com>
+            */
+            function ticket_delete_file()
+            {
+                ///delete image
+               
+               UTIL::unlinkFile($_GET['filename'],URI::getAbsMediaPath(CFG::$ticketDir));
+               //update database if id is passed
+              
+               if(APP::$curId!='')
+               {
+                   $arrFields=array("image_name"=>'');
+                   DB::Update(CFG::$tblPrefix."ticket",$arrFields,"id = %d ",APP::$curId);
+               }
+               echo json_encode(array("result" => "success"));
+               exit;
+            }
+            function ticket_delete_report()
+            {
+                ///delete image
+               
+               UTIL::unlinkFile($_GET['filename'],URI::getAbsMediaPath(CFG::$ticketDir));
+               //update database if id is passed
+              
+               if(APP::$curId!='')
+               {
+                   $arrFields=array("attach_report"=>'');
+                   DB::Update(CFG::$tblPrefix."ticket",$arrFields,"id = %d ",APP::$curId);
+               }
+               echo json_encode(array("result" => "success"));
+               exit;
+            }
+            /**
+             * get customer region
+             * 
+             * @author Bhavin Lunagariya<bhavin.datatech@gmail.com>
+             */
+            function customer_region()
+            {
+                //Create model object
+                $ticketObj=new TicketModel();
+                if(isset($_REQUEST['customer_id']) && $_REQUEST['customer_id'] > 0 && (isset($_SESSION['user_login']) && $_SESSION['user_login']['roll_id']!='7'))
+                {
+                    if(isset($_REQUEST['customer_id']) && $_SESSION['user_login']['roll_id']=='6')
+                    {
+                        $searchData=json_encode($ticketObj->getCustomerEngRegion($_REQUEST['customer_id']));
+                    }
+                    else {
+                         $searchData=json_encode($ticketObj->getCustomerRegion($_REQUEST['customer_id']));
+                    }
+                   
+                    print_r($searchData);
+                    die;
+                }
+                else if(($_REQUEST['region_id'] && $_REQUEST['region_id'] > 0) && (isset($_SESSION['user_login']) && ($_SESSION['user_login']['roll_id']==1 || $_SESSION['user_login']['roll_id']==5  || $_SESSION['user_login']['roll_id']==8  )))
+                {
+                   
+                    $searchData=json_encode($ticketObj->getRegionEngineer($_REQUEST['region_id']));
+                    print_r($searchData);
+                    die;
+                }
+                else
+                {
+                    echo "";
+                }
+            }
+            /* Change status of ticker
+            *
+            * @author Bhavin Lunagariya <bhavin.datatech@gmail.com>
+            */
+
+           function change_status() {
+               
+
+               // create model object
+               $ticketObj = new TicketModel();
+
+               //change status
+               $ticketObj->changeStatus();
+
+               $msg = "Ticket(s) status have been activated successfully";
+               if ($_GET['newstatus'] == "0")
+                   $msg = "Ticket(s) status have been inactivated successfully";
+
+               echo json_encode(array("result" => "success", "title" => "Ticket Status", "message" => $msg));
+               exit;
+           }
+           /* 
+            * Delete Ticket
+            * 
+            * @author Bhavin Lunagariya <bhavin.datatech@gmail.com>
+            */
+           function delete_ticket()
+           {
+               //create model object
+               $ticketObj=new TicketModel();
+               //delete product
+               $ticketObj->deleteTicket();
+               echo json_encode(array("result" => "success","title" => "Ticket","message" => "Ticket(s) have been deleted successfully"));
+               exit;
+           }
+        function ticket_view()
+        {		
+                // load model
+                Load::loadModel("ticket");
+
+                // create model object
+                $ticketObj = new TicketModel();
+
+                //save comment
+                $ticketObj->saveComment();
+                
+                
+                // get page record for update
+                $check = $ticketObj->getTicketExist(APP::$curId);
+                
+                if(!$check)
+                {
+                    $_SESSION["actionResult"] = array("error" => "Ticket record is inactive or not exists!!");
+                    UTIL::redirect(URI::getURL(APP::$moduleName, "ticket_list"));
+                }
+                // get page record for update
+                $data["ticketData"] = $ticketObj->getTicketViewData(APP::$curId);
+                
+                $engineer_name=$ticketObj->getData("user","name","id",$data["ticketData"]['engineer_id']);
+              
+                $data["ticketData"]['engineer_name']=$engineer_name[0]['name'];
+                
+                
+                $data["ticketCommentData"]=$ticketObj->getTicketCommentData(APP::$curId);
+                // include js in footer
+               
+                $jsData = Layout::bufferContent(URI::getAbsModulePath()."/js/ticket_view.php");			
+                
+                // create javascript variable for ajax url			
+                Layout::addFooter($jsData);
+
+                // render layout
+                Layout::renderLayout($data);
+        }
+        public static function getComments($row) 
+        {  
+           
+            // load model
+            Load::loadModel("ticket");
+
+            // create model object
+            $ticketObj = new TicketModel();
+            $ticketObj->getTicketComment($row);
+            
+        }  
+        public static function delete_comment() 
+        {  
+           
+            //create model object
+               $ticketObj=new TicketModel();
+               //delete product
+               $ticketObj->deleteComment();
+               echo json_encode(array("result" => "success","title" => "Ticket","message" => "Comment(s) have been deleted successfully"));
+               exit;
+            
+        }  
+        /*
+         * Edit comment
+         * 
+         * @author Bhavin Lunagariya <bhavin.lunagariya@gmail.com>
+         */
+        function edit_comment()
+        {
+            // load model
+            Load::loadModel("ticket");
+
+            // create model object
+            $ticketObj = new TicketModel();
+            if(isset($_REQUEST['comment_id']) && $_REQUEST['comment_id'] > 0)
+            {
+                $commentData=$ticketObj->getCommentRecord($_REQUEST['comment_id']);
+                echo $commentData;
+                die;
+            }
+            else if(isset($_REQUEST['id']) && $_REQUEST['id'] > 0)
+            {
+               $ticketObj->saveComment();
+            }
+        }
+        /*
+         * Thank You Page
+         * @author Bhavin Lunagariya <bhavin.datatech@gmail.com>
+         */
+        function ticket_thank_you()
+        {
+            // render layout
+            Layout::renderLayout($data);
+        }
+           
+ }
+?>

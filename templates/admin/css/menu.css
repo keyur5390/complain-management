@@ -1,0 +1,110 @@
+.heading .nav-list {
+  border-width:0;
+  border-bottom:2px solid #79b0ce
+}
+.heading .nav-list>li {
+  float:left;
+  border-width:0 1px;
+  margin-left:-1px
+}
+.heading .nav-list>li:before {
+  left:-1px;
+  right:-1px;
+  bottom:auto;
+  top:-2px;
+  max-width:none;
+  width:auto;
+  height:2px;
+  border-width:0
+}
+.heading .nav-list>li.active:before {
+  display:block
+}
+.heading .nav-list>li.active:after {
+  display:none
+}
+.heading .nav-list>li:hover {
+  z-index:1026
+}
+.heading .nav-list>li.active {
+  z-index:1027
+}
+.heading .nav-list>li:first-child {
+  border-left-width:0;
+  margin-left:0
+}
+.heading .sidebar-shortcuts+.nav-list>li:first-child {
+  border-left-width:1px;
+  margin-left:-1px
+}
+.heading .nav-list>li>a {
+  line-height:22px!important;
+  height:auto!important;
+  padding:10px 14px!important
+}
+.heading .nav-list>li>a>.menu-icon {
+  display:block!important;
+  margin:1px 0 4px;
+  line-height:inherit;
+  width:auto
+}
+.heading .nav-list>li>a>.arrow {
+  display:none
+}
+.heading .nav-list>li.hover.pull_right {
+  float:none!important
+}
+.heading .nav-list>li.hover>.submenu {
+  top:100%;
+  left:1px;
+  margin-top:auto;
+  margin-left:-2px;
+  width:190px;
+  z-index:1026
+}
+.heading .nav-list>li.hover.pull_right>.submenu {
+  left:auto;
+  right:1px
+}
+.heading .nav-list>li.hover>.arrow {
+  right:auto;
+  top:auto;
+  left:24px;
+  bottom:7px
+}
+.heading .nav-list>li.hover.pull_right>.arrow {
+  left:auto;
+  right:24px
+}
+.heading .nav-list>li.hover>.arrow:after, .heading .nav-list>li.hover>.arrow:before {
+  border-width:0 8px 8px!important
+}
+.heading .nav-list>li.hover>.arrow:after {
+  border-color:transparent;
+  border-left-color:transparent!important;
+  border-right-color:transparent!important;
+  -moz-border-right-colors:none!important;
+  -moz-border-left-colors:none!important;
+  -moz-border-top-colors:none;
+  -moz-border-bottom-colors:none;
+  left:-10px!important;
+  right:auto!important
+}
+.heading .nav-list>li.hover>.arrow:before {
+  border-color:transparent;
+  border-left-color:transparent!important;
+  border-right-color:transparent!important;
+  -moz-border-right-colors:none!important;
+  -moz-border-left-colors:none!important;
+  -moz-border-top-colors:none;
+  -moz-border-bottom-colors:none;
+  right:auto!important;
+  left:-10px!important;
+  top:-1px!important
+}
+.heading .nav-list>li.hover:hover>a~.arrow {
+  display:none
+}
+.heading .nav-list>li.hover:hover>a.dropdown-toggle~.arrow {
+  display:block
+}

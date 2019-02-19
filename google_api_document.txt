@@ -1,0 +1,107 @@
+Follow below steps to integrate google analytics API in site
+=============================================================
+
+- Create Project in developer consol. (Use live site URL to create project)
+https://console.developers.google.com
+
+- Enable Google API service. Enable "Analytic API".
+https://console.developers.google.com/project/aqueous-flight-810/apiui/api
+
+- Get OAuth credentials from developer consol. Select "Web Application" from Application Type poup
+https://console.developers.google.com/project/aqueous-flight-810/apiui/credential
+
+- put "analyticsCron" folder in your project
+
+- Create "dtm_analytics_feed" and "dtm_analytics_goal" tables in database
+
+-------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `dtm_analytics_feed` (
+  `feed_id` varchar(100) NOT NULL,
+  `profile_id` varchar(100) NOT NULL,
+  `total_traffic` varchar(100) DEFAULT NULL,
+  `new_traffic` varchar(100) DEFAULT NULL,
+  `returning_traffic` varchar(100) DEFAULT NULL,
+  `total_referral_traffic` varchar(100) DEFAULT NULL,
+  `direct_traffic` varchar(100) DEFAULT NULL,
+  `search_engine` varchar(100) DEFAULT NULL,
+  `organic` varchar(100) DEFAULT NULL,
+  `ppc` varchar(100) DEFAULT NULL,
+  `australia_traffic` varchar(100) DEFAULT NULL,
+  `total_page_views` varchar(100) DEFAULT NULL,
+  `unique_visitors` varchar(100) DEFAULT NULL,
+  `top_sources_referral` text,
+  `top_organic_traffic` text,
+  `top_keywords_organic` text,
+  `top_keywords_ppc` text,
+  `total_bounce_rate` varchar(100) DEFAULT NULL,
+  `top_entry_page` text,
+  `top_exit_page` text,
+  `goal_data` text,
+  `no_pages_index` varchar(100) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  PRIMARY KEY (`feed_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dtm_analytics_goal`
+--
+
+CREATE TABLE IF NOT EXISTS `dtm_analytics_goal` (
+  `profile_id` varchar(256) NOT NULL,
+  `goal_id` int(11) NOT NULL,
+  `goal_name` varchar(256) NOT NULL,
+  `status` enum('0','1') NOT NULL
+)
+
+-------------------------------------------------------------------------------------------------------------
+
+
+- Open "config.php" file and add following config variables. replace its value with your project value
+
+-------------------------------------------------------------------------------
+		/**
+		 * Google analytic project client id. Get it from https://console.developers.google.com/project/aqueous-flight-810/apiui/credential
+		 * @var $googleClientId String
+		 */
+                public static $googleClientId = "753972924160-cnv724un3caj6ohiq6f04vo3ji8e93vr.apps.googleusercontent.com";
+                
+                /**
+		 * Google analytic project email id. Get it from https://console.developers.google.com/project/aqueous-flight-810/apiui/credential
+		 * @var $googleEmailId String
+		 */
+                public static $googleEmailId = "753972924160-cnv724un3caj6ohiq6f04vo3ji8e93vr@developer.gserviceaccount.com";
+                
+                /**
+		 * Google analytic project Secret Key. Get it from https://console.developers.google.com/project/aqueous-flight-810/apiui/credential
+		 * @var $googleSecretKey String
+		 */
+                public static $googleSecretKey = "3E6ETXlZjUSyXPuCnolE9OMl";
+                
+                /**
+		 * Google analytic project Redirect URL. Get it from https://console.developers.google.com/project/aqueous-flight-810/apiui/credential
+		 * @var $googleRedirectURL String
+		 */
+                public static $googleRedirectURL = "https://www.hairhealthandbeautyprofessional.com.au/crons/get_current_analytic_feed.php";
+                
+                /**
+		 * Google analytic site view id. Get it from URL of analytics. e.g. https://www.google.com/analytics/web/?hl=en#report/visitors-overview/a56217106w89604906p93124716/ - "93124716" is table id from URL
+		 * @var $google_tableId String
+		 */
+                public static $google_tableId="ga:8589073";
+                
+                /**
+		 * Google analytic site profile id.
+		 * @var $google_profileId String
+		 */
+                public static $google_profileId="8589073";
+-----------------------------------------------------------------------------------------------------------------
+
+- Make sure database have "dtm_configuration" table. It is used to store access token for future use.
+
+- After setting correct values in config variables once run cron in browser to grant permission to API. Make sure you must be logged-in in Google Analytics while doing this.
+
+- After granting permission set analytic cron in Cpanel. Set cron after making site live.

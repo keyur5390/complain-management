@@ -1,0 +1,164 @@
+<script type="text/javascript" src="<?php echo URI::getLiveTemplatePath() . "/js/jquery.paging.min.js" ?>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var displayPages = function(data, startIndex) {
+
+            var list = "";
+            for (i = 0; i < data.records.length; i++)
+            {
+                var odd = (i % 2 == 0) ? "" : " class='odd' ";
+                list = list + '<li ' + odd + '>';
+<?php if (isset($_SESSION['user_login']) && $_SESSION['user_login']['roll_id'] == '1') { ?>
+                    list = list + '<div class="chekMain"><div class="chkInn"><label><input type="checkbox" id="status' + data.records[i].id + '" name="status[' + data.records[i].id + ']" value="' + data.records[i].status + '" class="checkbox" /><span></span></label></div></div>';
+<?php } ?>
+                list = list + '<div class="hashBox">' + startIndex + '</div>';
+//                list = list + '<div class="pageName">' + data.records[i].id + '</div>';
+                list = list + '<div class="pageName">';
+
+
+                    list = list + '<a href="javascript:;" data-ele_id="' + data.records[i].id + '" id="p' + data.records[i].id + '" onClick="update_type(this);" data-text="' + data.records[i].name + '"  title="' + data.records[i].name + '">' + data.records[i].name + '</a>';
+
+
+
+                list = list + '<ul class="optUl">';
+
+
+                    list = list + '<li><a href="javascript:;" data-ele_id="' + data.records[i].id + '" id="p' + data.records[i].id + '" onClick="update_type(this);" data-text="' + data.records[i].name + '" title="Edit">Edit</a></li>';
+
+
+
+//                    list = list + '<li><a href="#" onclick="return changeStatus(\'index.php?m=mod_equipment&a=change_status\',' + data.records[i].id + ',\'\')" title="Change Status">Change Status</a></li>';
+
+
+
+                    list = list + '<li class="delLi"><a href="#" onclick="deleteRecord(\'index.php?m=mod_equipment&a=delete_equipment\',' + data.records[i].id + ')" title="Delete">Delete</a></li>';
+
+                list = list + '</ul>';
+
+                list = list + '<a class="toggleLink" href="javascript:;"></a>';
+
+                list = list + '</div>';
+
+//                list = list + '<div class="statusBox" data-title="Status:"><span class="conSpan">' + displayStatus(data.records[i].status) + '</span></div>';
+                list = list + '</li>';
+                startIndex = startIndex + 1;
+            }
+            $(".table").find("li:not(.topLi)").remove();
+            $(".table").append(list);
+            bindListingClick();
+        }
+
+        pageData.url = '<?php echo URI::getURL(APP::$moduleName, APP::$actionName) ?>';
+        pageData.noOfRecords = totalPages;
+        pageData.pagingBlock = '#pagingNo';
+        pageData.callbackFun = displayPages;
+        pageData.perPage = $('.numOfRecord').val();
+        if (oldPageState && oldPageState.searchData != undefined && oldPageState.searchData.searchForm.numOfRecord != undefined)
+        {
+            pageData.perPage = oldPageState.searchData.searchForm.numOfRecord;
+        }
+
+        // do paging	
+        createDataGrid();
+
+        // initialize sorting
+        sortData();
+
+        // create function for validating search form
+        validateSearchForm = function() {
+            if ($.trim($("#name").val()) == "")
+                   {
+                        alert("Please enter equipment name");
+                        return false;
+                    }
+            return true;
+        }
+        $("#btnsub").click(function() {
+            if ($.trim($("#txtequipment").val()) == "")
+                   {
+                        alert("Please enter equipment name");
+                        return false;
+                    } else {
+
+                var name = $('#txtequipment').val();
+                var pid = $('#txtid').val();
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo URI::getURL("mod_equipment", "save_equipment"); ?>',
+                    data: {pname: name, pid: pid},
+                    catch : false,
+                    success: function(data)
+                    {
+                        $('#btnsub').val('Add Type of equipment');
+                        $('#txtequipment').val('');
+                        $('#txtid').val('');
+                        $('#btncnl').css('display','none');
+                        doPaging();
+
+                    }
+                });
+            }
+            return false;
+        });
+        
+        pageData.validateSearch = validateSearchForm;
+
+        resetForm = function()
+        {
+            $("#name").val("");
+            //console.log(pageData)
+            pageData.searchField = "";
+            pageData.noOfRecords = totalPages;
+            doPaging();
+        }
+        <?php 
+//   To clear equipment
+//     @author Sagar Jogi <sagarjogi.datatech@gmail.com>
+    ?>
+ $("#btncnl").click(function() {
+     $('#btnsub').val('Add Type of equipment');
+    $('#txtequipment').val('');
+    $('#txtid').val('');
+ });
+        // display message			
+<?php Core::displayMessage("actionResult", "equipment"); ?>
+
+        // initialize tooltip	
+        applyTooltip();
+
+        // initialize popover
+        applyPopover();
+
+        // restore value of search form
+        function restoreSearchForm()
+        {
+            if (oldPageState && oldPageState.searchData)
+            {
+                $("#name").val(oldPageState.searchData.searchForm.name);
+                $(".numOfRecord").val(oldPageState.searchData.searchForm.numOfRecord);
+            }
+        }
+
+
+        restoreSearchForm();
+
+
+    });
+    <?php 
+//    function to update equipments
+//     @author Sagar Jogi <sagarjogi.datatech@gmail.com>
+    ?>
+    function update_type(temp) {
+        
+        var pid = '#' + temp.id;
+        var name = $(pid).data('text');
+        var id = $(pid).data('ele_id');
+        $('#txtequipment').val(name);
+        $('#txtid').val(id);
+        $('#btnsub').val('Update Type of equipment');
+        $('#btncnl').css('display','block');
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+
+//        $("#divstatus").children().attr("disabled","disabled");
+    }
+</script>

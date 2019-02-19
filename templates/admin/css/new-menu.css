@@ -1,0 +1,41 @@
+body.okayNav-loaded { overflow-x: hidden; }
+.okayNav ul { float: none; display: inline-block; }
+.okayNav__nav--invisible { position: absolute; top: 100%; -webkit-overflow-scrolling: touch; background: #f1f1f1; display: table; z-index: 99999; }
+.okayNav__nav--invisible a { text-align: left; display: block; border-bottom: 1px solid #dfdfdf; padding: 0 50px 0 15px; line-height: 50px; }
+.okayNav__nav--invisible.nav-left { left: 0; -webkit-transform: translateX(-100%); transform: translateX(-100%); }
+.okayNav__nav--invisible.nav-right { right: 0; -webkit-transform: translateX(105%); transform: translateX(105%); background-color: #f1f1f1; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176); -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176); }
+.okayNav__nav--invisible.transition-enabled { transition: -webkit-transform 400ms cubic-bezier(0.55, 0, 0.1, 1); transition: transform 400ms cubic-bezier(0.55, 0, 0.1, 1); transition: transform 400ms cubic-bezier(0.55, 0, 0.1, 1), -webkit-transform 400ms cubic-bezier(0.55, 0, 0.1, 1); }
+.okayNav__nav--invisible.nav-open { -webkit-transform: translateX(0); transform: translateX(0); }
+.okayNav__menu-toggle { position: relative; cursor: pointer; width: auto; height: auto; display: inline-block; z-index: 1; top: 20px; margin: 0 0 0 20px; background: none; }
+.okayNav__menu-toggle.okay-invisible { position: absolute; opacity: 0; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; pointer-events: none; }
+.okayNav__menu-toggle span { display: block; position: absolute; margin: auto; height: 4px; width: 4px; background: #2e2e33; border-radius: 50%; left: 0; right: 0; pointer-events: none; }
+.okayNav__menu-toggle span:nth-child(1) { top: 0; }
+.okayNav__menu-toggle span:nth-child(2) { top: 50%; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.okayNav__menu-toggle span:nth-child(3) { bottom: 0; }
+.okayNav__menu-toggle.icon--active:before { -webkit-transform: rotate(90deg); transform: rotate(90deg); }
+.okayNav__menu-toggle.icon--active span { background: #546edb; }
+.subfilter { display: block; }
+.subfilter > li { list-style-type: none; padding: 6px 8px; text-align: left; border-bottom: 1px solid #ddd; ; background: #f1f1f1; }
+.subfilter > li > a { display: block; padding: 4px 8px; }
+.subfilter .sub { padding: 0 10px; float: none; display: none; background: #f1f1f1; }
+/*.subfilter li:hover .sub {height:80px; overflow:visible;display:block;-moz-transition:all 300ms ease-in-out;-o-transition: all 300ms ease-in-out;transition: all 300ms ease-in-out;}*/
+.subfilter .sub li { padding: 6px 8px; border-bottom: 1px solid #ccc; -moz-transition: all 300ms ease-in-out; -o-transition: all 300ms ease-in-out; transition: all 300ms ease-in-out; }
+.subfilter .sub li:last-child { border: none; }
+.subfilter .sub li a { font-size: 13px; }
+#more-nav .subfilter { width: 230px; transform: translateX(105%); float: right; display: inline-block; display: table; position: absolute; top: 100%; z-index: 99999; right: 0; background: #f1f1f1; -moz-transition: all 300ms ease-in-out; -o-transition: all 300ms ease-in-out; transition: all 300ms ease-in-out }
+#more-nav .subfilter.open-menu { transform: translateX(0%); }
+.more-menu { position: relative; top: 0; }
+.subfilter > li > a span.iconSpan { margin-right: 6px; }
+.more-menu { background: rgba(0, 0, 0, 0) none repeat scroll 0 0; cursor: pointer; display: inline-block; height: auto; margin: 0 0 0 20px; position: relative; top: 20px; width: auto; z-index: 1; }
+
+
+.more-menu::before{background:url("../images/sprite.png") no-repeat scroll -496px 0;content:"";
+display:inline-block;height:20px;margin-right:15px;transition:transform 400ms cubic-bezier(0.55, 0, 0.1, 1) 0s, -webkit-transform 400ms cubic-bezier(0.55, 0, 0.1, 1) 0s;vertical-align: middle;width:4px;}
+.more-menu.close-menu::before{ background-position:-496px -24px;-moz-transform:rotate(90deg);-ms-transform:rotate(90deg);-o-transform:rotate(90deg);-webkit-transform:rotate(90deg);transform:rotate(90deg);}
+
+@media only screen and (max-width: 767px){
+    #more-nav {
+    display: none;
+}
+    
+}
